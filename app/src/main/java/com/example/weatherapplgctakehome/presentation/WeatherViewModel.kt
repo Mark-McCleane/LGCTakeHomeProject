@@ -17,26 +17,12 @@ import java.time.format.DateTimeFormatter
 class WeatherViewModel(
     private val repository: WeatherRepository
 ) : ViewModel() {
-    private val _searchText = MutableStateFlow("")
-    val searchText = _searchText.asStateFlow()
 
-    private val _currentWeatherData = MutableStateFlow<WeatherData?>(null)
-    val currentWeatherData = _currentWeatherData.asStateFlow()
-
-    private val _currentAstronomyData = MutableStateFlow<AstronomyData?>(null)
-    val currentAstronomyData = _currentAstronomyData.asStateFlow()
-
-    private val _currentWeatherDataList = MutableStateFlow<List<WeatherData?>>(emptyList())
-    val currentWeatherDataList = _currentWeatherDataList.asStateFlow()
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error = _error.asStateFlow()
-
-    private val _title = MutableStateFlow<String?>(null)
-    val title = _title.asStateFlow()
+    private val _uiState = MutableStateFlow<WeatherUiState>(WeatherUiState())
+    val uiState = _uiState.asStateFlow()
 
     fun onSearchTextChange(text: String) {
-        _searchText.value = text
+        _uiState.update { it.copy(searchText = text) }
     }
 
     fun getCurrentWeatherByLocation(locationParam: String) {
@@ -44,10 +30,14 @@ class WeatherViewModel(
             val getCurrentWeatherUC =
                 GetCurrentWeatherByLocationUC(repository).invoke(locationParam)
             if (getCurrentWeatherUC is WeatherData) {
-                _currentWeatherData.update { getCurrentWeatherUC }
-                _currentWeatherDataList.update { it.plus(getCurrentWeatherUC) }
+                _uiState.update {
+                    it.copy(
+                        currentWeatherData = getCurrentWeatherUC,
+                        currentWeatherDataList = it.currentWeatherDataList.plus(getCurrentWeatherUC)
+                    )
+                }
             } else {
-                _error.update { getCurrentWeatherUC.toString() }
+                _uiState.update { it.copy(error = getCurrentWeatherUC.toString()) }
             }
         }
     }
@@ -62,14 +52,23 @@ class WeatherViewModel(
             val getAstronomyByLocationUC =
                 GetAstronomyByLocationUC(repository).invoke(locationParam, dateTime)
             if (getAstronomyByLocationUC is AstronomyData) {
-                _currentAstronomyData.update { getAstronomyByLocationUC }
+                _uiState.update { it.copy(currentAstronomyData = getAstronomyByLocationUC) }
             } else {
-                _error.update { getAstronomyByLocationUC.toString() }
+                _uiState.update { it.copy(error = getAstronomyByLocationUC.toString()) }
             }
         }
     }
 
     fun updateTitle(title: String) {
-        _title.update { title }
+        _uiState.update { it.copy(title = title) }
     }
 }
+
+data class WeatherUiState(
+    val searchText: String = "",
+    val currentWeatherData: WeatherData? = null,
+    val currentAstronomyData: AstronomyData? = null,
+    val currentWeatherDataList: List<WeatherData?> = emptyList(),
+    val error: String? = null,
+    val title: String? = null
+)

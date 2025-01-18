@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.weatherapplgctakehome.data.WeatherRepositoryImpl
+import com.example.weatherapplgctakehome.domain.model.WeatherData
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -43,11 +44,8 @@ fun HomeScreen(
     navigateTo: (locationName: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val searchText by viewModel.searchText.collectAsState()
-    val currentWeatherData by viewModel.currentWeatherData.collectAsState()
-    val currentWeatherDataList by viewModel.currentWeatherDataList.collectAsState()
+    val state by viewModel.uiState.collectAsState()
     var isCelsius by rememberSaveable { mutableStateOf(true) }
-    val error by viewModel.error.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -55,10 +53,10 @@ fun HomeScreen(
         viewModel.updateTitle("Weather App")
     }
 
-    LaunchedEffect(error) {
-        if (error != null) {
+    LaunchedEffect(state.error) {
+        if (state.error != null) {
             snackbarHostState.showSnackbar(
-                "Error: $error",
+                "Error: $state.error",
                 withDismissAction = true,
                 duration = SnackbarDuration.Indefinite
             )
@@ -67,14 +65,14 @@ fun HomeScreen(
 
     Column {
         TextField(
-            value = searchText,
+            value = state.searchText,
             onValueChange = viewModel::onSearchTextChange,
             modifier = modifier.fillMaxWidth(),
             placeholder = { Text(text = "Search Tv Show") },
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        viewModel.getCurrentWeatherByLocation(searchText)
+                        viewModel.getCurrentWeatherByLocation(state.searchText)
                     }
                 ) {
                     Icon(
@@ -85,9 +83,9 @@ fun HomeScreen(
             }
         )
 
-        if (currentWeatherDataList.isNotEmpty()) {
+        if (state.currentWeatherDataList.isNotEmpty()) {
             LazyColumn {
-                items(currentWeatherDataList) { weatherData ->
+                items(items = state.currentWeatherDataList) { weatherData ->
                     ListItem(
                         leadingContent = {
                             AsyncImage(
@@ -126,6 +124,11 @@ fun HomeScreen(
         }
     }
 
+}
+
+fun removeDuplicates(currentWeatherDataList: List<WeatherData?>): List<WeatherData?> {
+    val set = currentWeatherDataList.toSet()
+    return set.toList()
 }
 
 @Preview(showBackground = true)

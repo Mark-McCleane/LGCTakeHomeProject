@@ -33,11 +33,11 @@ class MainActivity : ComponentActivity() {
             val snackbarHostState = remember { SnackbarHostState() }
             val navController = rememberNavController()
             val mainViewModel: WeatherViewModel = koinViewModel()
-            val title by mainViewModel.title.collectAsState()
+            val state by mainViewModel.uiState.collectAsState()
             WeatherAppLGCTakeHomeTheme {
                 Scaffold(
                     topBar = {
-                        TopAppBar(title = { Text(text = title ?: "Weather App") })
+                        TopAppBar(title = { Text(text = state.title ?: "Weather App") })
                     },
                     snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)

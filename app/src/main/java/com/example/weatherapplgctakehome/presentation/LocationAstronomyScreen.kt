@@ -27,8 +27,7 @@ fun LocationAstronomyScreen(
     modifier: Modifier = Modifier,
     locationName: String = ""
 ) {
-    val astronomyData by viewModel.currentAstronomyData.collectAsState()
-    val error by viewModel.error.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getAstronomyByLocation(locationName)
@@ -42,7 +41,7 @@ fun LocationAstronomyScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        astronomyData?.let {
+        state.currentAstronomyData?.let {
             AstronomyItem(label = "Sun Rise", value = it.sunRise)
             AstronomyItem(label = "Sun Set", value = it.sunSet)
             AstronomyItem(label = "Moon Rise", value = it.moonRise)
