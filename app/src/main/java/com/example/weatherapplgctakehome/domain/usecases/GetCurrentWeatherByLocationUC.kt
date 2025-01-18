@@ -11,7 +11,7 @@ class GetCurrentWeatherByLocationUC(
         val data = repository.getCurrentWeatherByLocation(apiKey, locationParam)
         if (data.isSuccessful && data.body() != null) {
             val mapper = WeatherDataMapperImpl()
-            val weatherData = mapper.map(data.body()!!) // Safe to unwrap as checked above
+            val weatherData = mapper.mapWeatherResponseToData(data.body()!!) // Safe to unwrap as checked above
             return weatherData
         } else {
             // Handle errors

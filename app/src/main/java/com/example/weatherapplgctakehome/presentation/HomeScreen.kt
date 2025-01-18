@@ -15,16 +15,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,12 +40,30 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     viewModel: WeatherViewModel = koinViewModel(),
+    navigateTo: (locationName: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchText by viewModel.searchText.collectAsState()
     val currentWeatherData by viewModel.currentWeatherData.collectAsState()
     val currentWeatherDataList by viewModel.currentWeatherDataList.collectAsState()
     var isCelsius by rememberSaveable { mutableStateOf(true) }
+    val error by viewModel.error.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.updateTitle("Weather App")
+    }
+
+    LaunchedEffect(error) {
+        if (error != null) {
+            snackbarHostState.showSnackbar(
+                "Error: $error",
+                withDismissAction = true,
+                duration = SnackbarDuration.Indefinite
+            )
+        }
+    }
 
     Column {
         TextField(
@@ -92,6 +115,9 @@ fun HomeScreen(
                                 text = if (isCelsius) "${weatherData?.currentTempInCelsius} °C" else "${weatherData?.currentTempInFahrenheit} °F",
                                 modifier = Modifier.clickable { isCelsius = !isCelsius }
                             )
+                        },
+                        modifier = Modifier.clickable {
+                            navigateTo(weatherData?.locationName ?: "")
                         }
                     )
                     HorizontalDivider()
@@ -109,6 +135,7 @@ fun SearchScreenPreview() {
         val repo = WeatherRepositoryImpl()
         HomeScreen(
             viewModel = WeatherViewModel(repo),
+            navigateTo = {},
             modifier = Modifier.padding(innerPadding)
         )
     }
