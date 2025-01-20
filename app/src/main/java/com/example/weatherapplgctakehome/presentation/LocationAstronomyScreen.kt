@@ -16,6 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
@@ -23,13 +25,16 @@ import java.util.Locale
 fun LocationAstronomyScreen(
     viewModel: WeatherViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
-    locationName: String = ""
+    locationName: String = "",
+    navController: NavHostController
 ) {
     val state by viewModel.uiState.collectAsState()
 
     BackHandler {
         viewModel.updateBackIconVisibility(false)
+        navController.popBackStack()
     }
+
     LaunchedEffect(key1 = Unit) {
         viewModel.getAstronomyByLocation(locationName)
         viewModel.updateTitle("Astronomy Data For $locationName")

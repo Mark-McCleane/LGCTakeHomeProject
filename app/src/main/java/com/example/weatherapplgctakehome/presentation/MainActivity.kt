@@ -89,6 +89,7 @@ class MainActivity : ComponentActivity() {
                             LocationAstronomyScreen(
                                 viewModel = mainViewModel,
                                 locationName = args.locationName,
+                                navController = navController,
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
