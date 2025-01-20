@@ -2,6 +2,9 @@
 
 [weather_app_quick_demo.webm](https://github.com/user-attachments/assets/798a87bc-98e7-481d-b11e-ffa49162a6ae)
 
+## APK
+Submitted via submission link as requested
+
 ## Things I'd like to change
 User having to click the button, I initially had it working but every keystroke was running a network request in the search field. I know the solution to that was to use the debounce on the UI but could not get it to work and spent too much time so I simplified it. Although it does hurt the UX of the app alright.
 
