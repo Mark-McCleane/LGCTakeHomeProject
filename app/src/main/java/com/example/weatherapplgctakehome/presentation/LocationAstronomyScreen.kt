@@ -1,25 +1,23 @@
 package com.example.weatherapplgctakehome.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
+import java.util.Locale
 
 @Composable
 fun LocationAstronomyScreen(
@@ -29,6 +27,9 @@ fun LocationAstronomyScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    BackHandler {
+        viewModel.updateBackIconVisibility(false)
+    }
     LaunchedEffect(key1 = Unit) {
         viewModel.getAstronomyByLocation(locationName)
         viewModel.updateTitle("Astronomy Data For $locationName")
@@ -41,30 +42,42 @@ fun LocationAstronomyScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        state.currentAstronomyData?.let {
-            AstronomyItem(label = "Sun Rise", value = it.sunRise)
-            AstronomyItem(label = "Sun Set", value = it.sunSet)
-            AstronomyItem(label = "Moon Rise", value = it.moonRise)
-            AstronomyItem(label = "Moon Set", value = it.moonSet)
-            AstronomyItem(label = "Moon Phase", value = it.moonPhase)
-            AstronomyItem(label = "Moon Illumination", value = it.moonIllumination.toString())
-            AstronomyItem(label = "Is Sun Up", value = if (it.isSunUp) "Yes" else "No")
-            AstronomyItem(label = "Is Moon Up", value = if (it.isMoonUp) "Yes" else "No")
+        state.currentAstronomyData?.let { astroData ->
+            val astroItems = listOf(
+                AstroItem("Sun Rise", astroData.sunRise),
+                AstroItem("Sun Set", astroData.sunSet),
+                AstroItem("Moon Rise", astroData.moonRise),
+                AstroItem("Moon Set", astroData.moonSet),
+                AstroItem("Moon Phase", astroData.moonPhase),
+                AstroItem("Moon Illumination", astroData.moonIllumination.toString()),
+                AstroItem(
+                    label = "Is Sun Up",
+                    value = astroData.isSunUp.toString().replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                    }
+                ),
+                AstroItem(
+                    label = "Is Moon Up",
+                    value = astroData.isMoonUp.toString().replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                    }
+                ),
+            )
+
+            LazyColumn(modifier = modifier) {
+                items(astroItems.size) { index ->
+                    ListItem(
+                        headlineContent = { Text(astroItems[index].label) },
+                        trailingContent = { Text(astroItems[index].value) }
+                    )
+                    HorizontalDivider()
+                }
+            }
         }
     }
 }
 
-@Composable
-fun AstronomyItem(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = label, fontWeight = FontWeight.Bold)
-        Text(text = value)
-    }
-    HorizontalDivider()
-    Spacer(modifier = Modifier.height(4.dp))
-}
+data class AstroItem(
+    val label: String,
+    val value: String
+)

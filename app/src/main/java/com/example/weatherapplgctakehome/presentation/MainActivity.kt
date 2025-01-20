@@ -6,7 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -37,28 +41,50 @@ class MainActivity : ComponentActivity() {
             WeatherAppLGCTakeHomeTheme {
                 Scaffold(
                     topBar = {
-                        TopAppBar(title = { Text(text = state.title ?: "Weather App") })
+                        TopAppBar(
+                            title = { Text(text = state.title ?: "Weather App") },
+                            navigationIcon = {
+                                if (state.backIconVisible) {
+                                    IconButton(onClick = {
+                                        navController.popBackStack()
+                                        mainViewModel.updateBackIconVisibility(false)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Navigation Back Arrow",
+                                        )
+                                    }
+                                }
+                            }
+                        )
                     },
                     snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)
                     },
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
-
-
-                    NavHost(navController = navController, startDestination = HomeScreenRoute) {
-                        composable<HomeScreenRoute>{
+                    NavHost(
+                        navController = navController,
+                        startDestination = HomeScreenRoute
+                    ) {
+                        composable<HomeScreenRoute> {
                             HomeScreen(
                                 viewModel = mainViewModel,
                                 navigateTo = { locationName ->
-                                    navController.navigate(LocationAstronomyScreenRoute(locationName))
+                                    navController.navigate(
+                                        LocationAstronomyScreenRoute(
+                                            locationName
+                                        )
+                                    )
+                                    mainViewModel.updateBackIconVisibility(true)
                                 },
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
 
                         composable<LocationAstronomyScreenRoute> { backStackEntry ->
-                            val args = backStackEntry.toRoute<LocationAstronomyScreenRoute>()
+                            val args =
+                                backStackEntry.toRoute<LocationAstronomyScreenRoute>()
 
                             LocationAstronomyScreen(
                                 viewModel = mainViewModel,

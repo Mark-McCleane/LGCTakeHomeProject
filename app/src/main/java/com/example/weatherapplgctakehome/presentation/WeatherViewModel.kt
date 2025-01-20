@@ -62,6 +62,10 @@ class WeatherViewModel(
     fun updateTitle(title: String) {
         _uiState.update { it.copy(title = title) }
     }
+
+    fun updateBackIconVisibility(value: Boolean) {
+        _uiState.update { state -> state.copy(backIconVisible = value) }
+    }
 }
 
 data class WeatherUiState(
@@ -70,5 +74,6 @@ data class WeatherUiState(
     val currentAstronomyData: AstronomyData? = null,
     val currentWeatherDataList: List<WeatherData?> = emptyList(),
     val error: String? = null,
-    val title: String? = null
+    val title: String? = null,
+    val backIconVisible: Boolean = false
 )
