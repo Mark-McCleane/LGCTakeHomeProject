@@ -59,10 +59,8 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.converter.gson)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.glide)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-    annotationProcessor(libs.glide.compiler)
 
     //Koin
     implementation(libs.koin.android)
