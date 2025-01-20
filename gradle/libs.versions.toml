@@ -21,6 +21,9 @@ coilCompose = "3.0.0-rc01"
 coilNetworkOkhttp = "3.0.0-rc01"
 navigationCompose = "2.8.5"
 serialization = "1.6.3"
+junitJupiter = "5.8.1"
+mockk = "1.13.5"
+kotlinxCoroutinesTest = "1.9.0"
 
 
 [libraries]
@@ -52,10 +55,15 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinVers
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinVersion"}
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinVersion"}
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinVersion"}
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koinVersion" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
