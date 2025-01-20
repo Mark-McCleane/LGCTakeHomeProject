@@ -47,7 +47,6 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     var isCelsius by rememberSaveable { mutableStateOf(true) }
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.updateTitle("Weather App")
@@ -56,7 +55,7 @@ fun HomeScreen(
     LaunchedEffect(state.error) {
         if (state.error != null) {
             snackbarHostState.showSnackbar(
-                "Error: $state.error",
+                "Error: ${state.error}",
                 withDismissAction = true,
                 duration = SnackbarDuration.Indefinite
             )
@@ -68,7 +67,7 @@ fun HomeScreen(
             value = state.searchText,
             onValueChange = viewModel::onSearchTextChange,
             modifier = modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Search Tv Show") },
+            placeholder = { Text(text = "Search Locations For Weather") },
             trailingIcon = {
                 IconButton(
                     onClick = {
@@ -77,7 +76,7 @@ fun HomeScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search Tv Shows"
+                        contentDescription = "Search Locations For Weather Button Search"
                     )
                 }
             }
@@ -124,11 +123,6 @@ fun HomeScreen(
         }
     }
 
-}
-
-fun removeDuplicates(currentWeatherDataList: List<WeatherData?>): List<WeatherData?> {
-    val set = currentWeatherDataList.toSet()
-    return set.toList()
 }
 
 @Preview(showBackground = true)
