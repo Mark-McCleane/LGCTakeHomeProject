@@ -30,3 +30,6 @@ I used to Koin for a lightweight dependency injection.
 
 ## Coil
 I used coil to load images from a network request url to display in the UI.
+
+## Unit Tests
+Do not work but I have a few unit tests in there.
